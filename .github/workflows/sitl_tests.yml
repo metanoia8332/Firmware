@@ -53,9 +53,12 @@ jobs:
     - name: Run SITL tests far in the West
       run: PX4_HOME_LAT=59.6176928 PX4_HOME_LON=-151.1453163 PX4_HOME_ALT=48 |
         test/mavsdk_tests/mavsdk_test_runner.py --speed-factor 20 --abort-early test/mavsdk_tests/configs/sitl.json
+    - name: Show core files
+      if: always()
+      run: find /tmp -name "core*"
     - name: Look for core files
       if: always()
-      run: find /tmp -name "core*" | xargs -I _ gdb --core _ -ex "thread apply all bt" -ex "quit"
+      run: find /tmp -name "core*" | xargs -I '{}' gdb /__w/Firmware/Firmware/build/px4_sitl_default/bin/px4 '{}' -ex "thread apply all bt" -ex "quit"
 
     # Report test coverage
     - name: disable the keychain credential helper
